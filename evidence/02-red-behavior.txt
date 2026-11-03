@@ -1,0 +1,156 @@
+..........FF...F.....F.F.FF.F                                            [100%]
+=================================== FAILURES ===================================
+___________________ test_add_rejects_incomplete_posts[data2] ___________________
+
+client = <FlaskClient <Flask 'project.app'>>, app = <Flask 'project.app'>
+data = {'title': '', 'text': 'Body'}
+
+    @pytest.mark.parametrize("data", [
+        {}, {"title": "Title"}, {"title": "", "text": "Body"},
+        {"title": "Title", "text": "   "},
+    ])
+    def test_add_rejects_incomplete_posts(client, app, data):
+        login(client)
+>       assert client.post("/add", data=data).status_code == 400
+E       AssertionError: assert 302 == 400
+E        +  where 302 = <WrapperTestResponse streamed [302 FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [302 FOUND]> = post('/add', data={'title': '', 'text': 'Body'})
+E        +      where post = <FlaskClient <Flask 'project.app'>>.post
+
+tests/app_test.py:109: AssertionError
+___________________ test_add_rejects_incomplete_posts[data3] ___________________
+
+client = <FlaskClient <Flask 'project.app'>>, app = <Flask 'project.app'>
+data = {'title': 'Title', 'text': '   '}
+
+    @pytest.mark.parametrize("data", [
+        {}, {"title": "Title"}, {"title": "", "text": "Body"},
+        {"title": "Title", "text": "   "},
+    ])
+    def test_add_rejects_incomplete_posts(client, app, data):
+        login(client)
+>       assert client.post("/add", data=data).status_code == 400
+E       AssertionError: assert 302 == 400
+E        +  where 302 = <WrapperTestResponse streamed [302 FOUND]>.status_code
+E        +    where <WrapperTestResponse streamed [302 FOUND]> = post('/add', data={'title': 'Title', 'text': '   '})
+E        +      where post = <FlaskClient <Flask 'project.app'>>.post
+
+tests/app_test.py:109: AssertionError
+___________________________ test_delete_missing_post ___________________________
+
+client = <FlaskClient <Flask 'project.app'>>
+
+    def test_delete_missing_post(client):
+        login(client)
+        response = client.get("/delete/999999")
+>       assert response.status_code == 404
+E       assert 200 == 404
+E        +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+
+tests/app_test.py:144: AssertionError
+_____________________________ test_search_no_match _____________________________
+
+client = <FlaskClient <Flask 'project.app'>>, posts = [1, 2, 3]
+
+    def test_search_no_match(client, posts):
+>       assert b"No matching entries." in client.get("/search/?query=nomatch").data
+E       assert b'No matching entries.' in b'<!DOCTYPE html>\n<html>\n  <head>\n    <title>Flaskr</title>\n    <link\n      rel="stylesheet"\n      type="text/cs...    </div>\n    <script\n      type="text/javascript"\n      src="/static/main.js"\n    ></script>\n  </body>\n</html>'
+E        +  where b'<!DOCTYPE html>\n<html>\n  <head>\n    <title>Flaskr</title>\n    <link\n      rel="stylesheet"\n      type="text/cs...    </div>\n    <script\n      type="text/javascript"\n      src="/static/main.js"\n    ></script>\n  </body>\n</html>' = <WrapperTestResponse 1028 bytes [200 OK]>.data
+E        +    where <WrapperTestResponse 1028 bytes [200 OK]> = get('/search/?query=nomatch')
+E        +      where get = <FlaskClient <Flask 'project.app'>>.get
+
+tests/app_test.py:176: AssertionError
+___________________ test_search_result_has_correct_delete_id ___________________
+
+client = <FlaskClient <Flask 'project.app'>>, posts = [1, 2, 3]
+
+    def test_search_result_has_correct_delete_id(client, posts):
+        login(client)
+        response = client.get("/search/?query=refactor")
+>       assert f'id="{posts[0]}"'.encode() in response.data
+E       assert b'id="1"' in b'<!DOCTYPE html>\n<html>\n  <head>\n    <title>Flaskr</title>\n    <link\n      rel="stylesheet"\n      type="text/cs...    </div>\n    <script\n      type="text/javascript"\n      src="/static/main.js"\n    ></script>\n  </body>\n</html>'
+E        +  where b'id="1"' = <built-in method encode of str object at 0x10a70f060>()
+E        +    where <built-in method encode of str object at 0x10a70f060> = 'id="1"'.encode
+E        +  and   b'<!DOCTYPE html>\n<html>\n  <head>\n    <title>Flaskr</title>\n    <link\n      rel="stylesheet"\n      type="text/cs...    </div>\n    <script\n      type="text/javascript"\n      src="/static/main.js"\n    ></script>\n  </body>\n</html>' = <WrapperTestResponse 1148 bytes [200 OK]>.data
+
+tests/app_test.py:188: AssertionError
+_________________________ test_post_html_is_sanitized __________________________
+
+client = <FlaskClient <Flask 'project.app'>>
+
+    def test_post_html_is_sanitized(client):
+        login(client)
+        response = client.post("/add", data={"title": "Markup", "text":
+            '<strong>OK</strong><script>alert(1)</script><img src=x onerror=alert(2)>'},
+            follow_redirects=True)
+        assert b"<strong>OK</strong>" in response.data
+>       assert b"<script>alert(1)" not in response.data
+E       assert b'<script>alert(1)' not in b'<!DOCTYPE html>\n<html>\n  <head>\n    <title>Flaskr</title>\n    <link\n      rel="stylesheet"\n      type="text/cs...    </div>\n    <script\n      type="text/javascript"\n      src="/static/main.js"\n    ></script>\n  </body>\n</html>'
+E        +  where b'<!DOCTYPE html>\n<html>\n  <head>\n    <title>Flaskr</title>\n    <link\n      rel="stylesheet"\n      type="text/cs...    </div>\n    <script\n      type="text/javascript"\n      src="/static/main.js"\n    ></script>\n  </body>\n</html>' = <WrapperTestResponse 1700 bytes [200 OK]>.data
+
+tests/app_test.py:202: AssertionError
+________________________ test_index_orders_newest_first ________________________
+
+client = <FlaskClient <Flask 'project.app'>>, posts = [1, 2, 3]
+
+    def test_index_orders_newest_first(client, posts):
+        html = client.get("/").data
+>       assert html.index(b"Unrelated") < html.index(b"Deployment") < html.index(b"Flask testing")
+E       assert 853 < 734
+E        +  where 853 = <built-in method index of bytes object at 0x760148500>(b'Unrelated')
+E        +    where <built-in method index of bytes object at 0x760148500> = b'<!DOCTYPE html>\n<html>\n  <head>\n    <title>Flaskr</title>\n    <link\n      rel="stylesheet"\n      type="text/cs...    </div>\n    <script\n      type="text/javascript"\n      src="/static/main.js"\n    ></script>\n  </body>\n</html>'.index
+E        +  and   734 = <built-in method index of bytes object at 0x760148500>(b'Deployment')
+E        +    where <built-in method index of bytes object at 0x760148500> = b'<!DOCTYPE html>\n<html>\n  <head>\n    <title>Flaskr</title>\n    <link\n      rel="stylesheet"\n      type="text/cs...    </div>\n    <script\n      type="text/javascript"\n      src="/static/main.js"\n    ></script>\n  </body>\n</html>'.index
+
+tests/app_test.py:208: AssertionError
+_______________________ test_postgres_url_normalization ________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a867bf0>
+
+    def test_postgres_url_normalization(monkeypatch):
+        monkeypatch.setenv("DATABASE_URL", "postgres://user:password@localhost/example")
+>       application = create_app({"TESTING": True})
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/app_test.py:229: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/app.py:30: in create_app
+    db.init_app(app)
+../../work/venv/lib/python3.12/site-packages/flask_sqlalchemy/extension.py:374: in init_app
+    engines[key] = self._make_engine(key, options, app)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../work/venv/lib/python3.12/site-packages/flask_sqlalchemy/extension.py:665: in _make_engine
+    return sa.engine_from_config(options, prefix="")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../work/venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:832: in engine_from_config
+    return create_engine(url, **options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+../../work/venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+../../work/venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+../../work/venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/app_test.py::test_add_rejects_incomplete_posts[data2] - Assertio...
+FAILED tests/app_test.py::test_add_rejects_incomplete_posts[data3] - Assertio...
+FAILED tests/app_test.py::test_delete_missing_post - assert 200 == 404
+FAILED tests/app_test.py::test_search_no_match - assert b'No matching entries...
+FAILED tests/app_test.py::test_search_result_has_correct_delete_id - assert b...
+FAILED tests/app_test.py::test_post_html_is_sanitized - assert b'<script>aler...
+FAILED tests/app_test.py::test_index_orders_newest_first - assert 853 < 734
+FAILED tests/app_test.py::test_postgres_url_normalization - ModuleNotFoundErr...
+8 failed, 21 passed in 0.52s

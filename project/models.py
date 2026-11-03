@@ -1,4 +1,4 @@
-from project.app import db
+from project.extensions import db
 
 
 class Post(db.Model):
