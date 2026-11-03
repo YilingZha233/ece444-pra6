@@ -17,8 +17,8 @@ Live deployment URL: **not yet recorded**
 
 ## Verify before submission
 
-- [ ] GitHub repository contains the final code
-- [ ] GitHub Actions workflow passes on the final commit
+- [x] GitHub repository contains the final code
+- [x] GitHub Actions workflow passes on the implementation commit (see linked run in README)
 - [ ] Render account created with UofT email
 - [ ] PostgreSQL instance and web service deployed
 - [ ] Live `/health` returns status ok

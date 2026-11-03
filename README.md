@@ -26,7 +26,7 @@ python -m flake8 .
 python -m black --check .
 ```
 
-Verified locally: **29 tests passed**, Flake8 passed, and Black passed. GitHub Actions runs these checks on pushes and pull requests. Most tests exercise Flask routes and a real temporary SQLite database; they are integration tests rather than isolated unit tests. PostgreSQL URL selection is tested without opening a remote connection. A successful live PostgreSQL deployment must still be verified separately.
+Verified locally: **29 tests passed**, Flake8 passed, and Black passed. GitHub Actions runs these checks on pushes and pull requests. [Verified passing CI run](https://github.com/YilingZha233/ece444-pra6/actions/runs/41564643663). Most tests exercise Flask routes and a real temporary SQLite database; they are integration tests rather than isolated unit tests. PostgreSQL URL selection is tested without opening a remote connection. A successful live PostgreSQL deployment must still be verified separately.
 
 ## What is included
 
@@ -64,3 +64,7 @@ The submission is your GitHub repository URL. A live deployment, an in-person de
 - Admin credentials and the session signing key can come from environment variables.
 
 For compatibility with the assigned tutorial, deletion still uses `GET /delete/<id>` and logout uses GET. This is a course demo: a production application should use state-changing POST/DELETE requests with CSRF protection, user records with hashed passwords, and database migrations instead of relying only on `create_all()`.
+
+## Browser verification
+
+A local Gunicorn browser check verified login, posting, mixed-case body search, deletion from search results, and logout. Screenshots are in `evidence/browser-search.png` and `evidence/browser-delete.png`. This is local verification; a live Render deployment remains pending account setup.

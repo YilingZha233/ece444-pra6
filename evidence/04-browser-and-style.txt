@@ -1,0 +1,12 @@
+Local verification completed with Gunicorn at http://127.0.0.1:5001 and a separate SQLite demo database.
+PASS: home and login render.
+PASS: login with local demo credentials.
+PASS: create PRA6 browser check / Flask and PostgreSQL deployment.
+PASS: search pOsTgReSqL matches the post body and displays the correct entry.
+PASS: Delete button removes that test entry; refreshed results show No matching entries.
+PASS: logout clears authenticated controls.
+PASS: python -m flake8 .
+PASS: python -m black --check . (8 Python files unchanged)
+PASS: GitHub Actions Tests and style for implementation commit 9bcccf04a78a1ec8f7f09da67dc62cda0076ef73.
+CI URL: https://github.com/YilingZha233/ece444-pra6/actions/runs/41564643663
+NOT YET VERIFIED: live Render deployment and PostgreSQL persistence. Render account setup is pending.
