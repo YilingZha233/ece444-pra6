@@ -1,41 +1,60 @@
+"""Blog routes, authentication, and database operations."""
+
 from functools import wraps
 
+import bleach
 from flask import (
-    Blueprint, current_app as app, render_template, request, session,
-    flash, redirect, url_for, abort, jsonify,
+    Blueprint,
+    current_app,
+    render_template,
+    request,
+    session,
+    flash,
+    redirect,
+    url_for,
+    jsonify,
 )
 
 from project.extensions import db
-from project import models
+from project.models import Post
 
 bp = Blueprint("blog", __name__)
 
 
-def login_required(f):
-    @wraps(f)
+def login_required(view):
+    @wraps(view)
     def decorated_function(*args, **kwargs):
         if not session.get("logged_in"):
             flash("Please log in.")
             return jsonify({"status": 0, "message": "Please log in."}), 401
-        return f(*args, **kwargs)
+        return view(*args, **kwargs)
 
     return decorated_function
 
 
 @bp.route("/")
 def index():
-    """Searches the database for entries, then displays them."""
-    entries = db.session.query(models.Post)
+    entries = db.session.scalars(db.select(Post).order_by(Post.id.desc())).all()
     return render_template("index.html", entries=entries)
 
 
 @bp.route("/add", methods=["POST"])
+@login_required
 def add_entry():
-    """Adds new post to the database."""
-    if not session.get("logged_in"):
-        abort(401)
-    new_entry = models.Post(request.form["title"], request.form["text"])
-    db.session.add(new_entry)
+    title = request.form.get("title", "").strip()
+    text = request.form.get("text", "").strip()
+    if not title or not text:
+        return "Title and text are required.", 400
+    # Preserve the tutorial's basic HTML formatting without executing arbitrary HTML.
+    text = bleach.clean(
+        text,
+        tags=["strong", "em", "b", "i", "p", "br", "ul", "ol", "li"],
+        attributes={},
+        strip=True,
+    )
+    if not text.strip():
+        return "Text must contain content.", 400
+    db.session.add(Post(title, text))
     db.session.commit()
     flash("New entry was successfully posted")
     return redirect(url_for("index"))
@@ -43,14 +62,14 @@ def add_entry():
 
 @bp.route("/login", methods=["GET", "POST"])
 def login():
-    """User login/authentication/session management."""
     error = None
     if request.method == "POST":
-        if request.form["username"] != app.config["USERNAME"]:
+        if request.form.get("username") != current_app.config["USERNAME"]:
             error = "Invalid username"
-        elif request.form["password"] != app.config["PASSWORD"]:
+        elif request.form.get("password") != current_app.config["PASSWORD"]:
             error = "Invalid password"
         else:
+            session.clear()
             session["logged_in"] = True
             flash("You were logged in")
             return redirect(url_for("index"))
@@ -59,8 +78,7 @@ def login():
 
 @bp.route("/logout")
 def logout():
-    """User logout/authentication/session management."""
-    session.pop("logged_in", None)
+    session.clear()
     flash("You were logged out")
     return redirect(url_for("index"))
 
@@ -68,25 +86,33 @@ def logout():
 @bp.route("/delete/<int:post_id>", methods=["GET"])
 @login_required
 def delete_entry(post_id):
-    """Deletes post from database."""
-    result = {"status": 0, "message": "Error"}
-    try:
-        new_id = post_id
-        db.session.query(models.Post).filter_by(id=new_id).delete()
-        db.session.commit()
-        result = {"status": 1, "message": "Post Deleted"}
-        flash("The entry was deleted.")
-    except Exception as e:
-        result = {"status": 0, "message": repr(e)}
-    return jsonify(result)
+    """Keep the tutorial's GET endpoint for this course demonstration."""
+    post = db.session.get(Post, post_id)
+    if post is None:
+        return jsonify({"status": 0, "message": "Post not found."}), 404
+    db.session.delete(post)
+    db.session.commit()
+    flash("The entry was deleted.")
+    return jsonify({"status": 1, "message": "Post Deleted"})
 
 
-@bp.route("/search/", methods=["GET"])
+@bp.route("/search/")
 def search():
-    query = request.args.get("query")
-    entries = db.session.query(models.Post)
+    query = request.args.get("query", "").strip()
+    entries = []
     if query:
-        return render_template("search.html", entries=entries, query=query)
-    return render_template("search.html")
+        # Match the tutorial's literal, case-insensitive title-or-body search.
+        posts = db.session.scalars(db.select(Post).order_by(Post.id.desc())).all()
+        entries = [
+            post
+            for post in posts
+            if query.lower() in post.title.lower() or query.lower() in post.text.lower()
+        ]
+    return render_template("search.html", entries=entries, query=query)
 
 
+@bp.route("/health")
+def health():
+    # Query the application table so a missing schema also fails the health check.
+    db.session.execute(db.select(Post.id).limit(1))
+    return jsonify({"status": "ok"})

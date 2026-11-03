@@ -1,0 +1,40 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.14, pytest-9.2.0, pluggy-1.7.0 -- /Users/yilingzha/Documents/Codex/2026-11-02/ple/outputs/flaskr-tdd/../../work/venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/yilingzha/Documents/Codex/2026-11-02/ple/outputs/flaskr-tdd
+configfile: pyproject.toml
+testpaths: tests
+plugins: platformdirs-4.14.3
+collecting ... collected 29 items
+
+tests/app_test.py::test_index PASSED                                     [  3%]
+tests/app_test.py::test_database PASSED                                  [  6%]
+tests/app_test.py::test_empty_db PASSED                                  [ 10%]
+tests/app_test.py::test_login_logout PASSED                              [ 13%]
+tests/app_test.py::test_invalid_login[wrong-test-password-Invalid username] PASSED [ 17%]
+tests/app_test.py::test_invalid_login[tester-wrong-Invalid password] PASSED [ 20%]
+tests/app_test.py::test_messages PASSED                                  [ 24%]
+tests/app_test.py::test_add_requires_login PASSED                        [ 27%]
+tests/app_test.py::test_add_rejects_incomplete_posts[data0] PASSED       [ 31%]
+tests/app_test.py::test_add_rejects_incomplete_posts[data1] PASSED       [ 34%]
+tests/app_test.py::test_add_rejects_incomplete_posts[data2] PASSED       [ 37%]
+tests/app_test.py::test_add_rejects_incomplete_posts[data3] PASSED       [ 41%]
+tests/app_test.py::test_delete_message PASSED                            [ 44%]
+tests/app_test.py::test_delete_requires_login PASSED                     [ 48%]
+tests/app_test.py::test_logout_revokes_delete_access PASSED              [ 51%]
+tests/app_test.py::test_delete_missing_post PASSED                       [ 55%]
+tests/app_test.py::test_delete_invalid_id PASSED                         [ 58%]
+tests/app_test.py::test_search_page_without_query PASSED                 [ 62%]
+tests/app_test.py::test_search_filters_title_and_body_case_insensitively[flask-expected0-excluded0] PASSED [ 65%]
+tests/app_test.py::test_search_filters_title_and_body_case_insensitively[rEfAcToR-expected1-excluded1] PASSED [ 68%]
+tests/app_test.py::test_search_filters_title_and_body_case_insensitively[Render-expected2-excluded2] PASSED [ 72%]
+tests/app_test.py::test_search_no_match PASSED                           [ 75%]
+tests/app_test.py::test_search_blank_query PASSED                        [ 79%]
+tests/app_test.py::test_search_result_has_correct_delete_id PASSED       [ 82%]
+tests/app_test.py::test_search_escapes_query PASSED                      [ 86%]
+tests/app_test.py::test_post_html_is_sanitized PASSED                    [ 89%]
+tests/app_test.py::test_index_orders_newest_first PASSED                 [ 93%]
+tests/app_test.py::test_independent_app_database PASSED                  [ 96%]
+tests/app_test.py::test_postgres_url_normalization PASSED                [100%]
+
+============================== 29 passed in 2.41s ==============================

@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: ece444-pra6
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python create_db.py && gunicorn project.app:app --bind 0.0.0.0:$PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.14
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ece444-pra6-db
+          property: connectionString
+
+databases:
+  - name: ece444-pra6-db
+    plan: free
+    databaseName: flaskr
+    user: flaskr

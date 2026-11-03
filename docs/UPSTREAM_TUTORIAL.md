@@ -10,7 +10,7 @@ This repository is adapted from the [upstream project](https://github.com/mjhea0
 
 You'll be building a simple blogging app in this tutorial:
 
-![flaskr app](images/flaskr-app.png)
+![flaskr app](https://raw.githubusercontent.com/shuruizUofT/flaskr-tdd/main/images/flaskr-app.png)
 
 ## Contents
 1. [Project Setup](#project-setup)
@@ -965,7 +965,7 @@ tests/app_test.py ......                                                    [100
 <img width="1171" height="391" alt="Screenshot 2026-10-15 at 2 18 18 PM" src="https://github.com/user-attachments/assets/afe5b110-d51a-4db2-bf16-ce712ab44f5e" />
 
 
-![](images/image-14.png)
+![](https://raw.githubusercontent.com/shuruizUofT/flaskr-tdd/main/images/image-14.png)
 
 
 ## Bootstrap
@@ -1569,7 +1569,7 @@ $env:DATABASE_URL="the value of the external database URL you copied earlier"
 
 3. With the DATABASE_URL set, run db.create_all() locally to create the tables in the Postgres database.
 
-![](images/image-20.png)
+![](https://raw.githubusercontent.com/shuruizUofT/flaskr-tdd/main/images/image-20.png)
 
 4. Run the tests to ensure they still pass locally.
 5. Commit and push your code to the GitHub

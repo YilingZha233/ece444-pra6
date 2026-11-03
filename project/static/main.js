@@ -1,26 +1,19 @@
-(function () {
-  console.log("ready!"); // sanity check
-})();
-
-const postElements = document.getElementsByClassName("entry");
-
-for (var i = 0; i < postElements.length; i++) {
-  postElements[i].addEventListener("click", function () {
-    const postId = this.getElementsByTagName("h2")[0].getAttribute("id");
-    const node = this;
-    fetch(`/delete/${postId}`)
-      .then(function (resp) {
-        return resp.json();
-      })
-      .then(function (result) {
-        if (result.status === 1) {
-          node.parentNode.removeChild(node);
-          console.log(result);
-        }
-        location.reload();
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
+// Use an explicit button so selecting or reading a post does not delete it.
+document.querySelectorAll(".delete-entry").forEach((button) => {
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+    const error = document.getElementById("delete-error");
+    try {
+      const response = await fetch(`/delete/${button.dataset.postId}`);
+      const result = await response.json();
+      if (!response.ok || result.status !== 1) {
+        throw new Error(result.message || "Unable to delete this entry.");
+      }
+      window.location.reload();
+    } catch (problem) {
+      error.textContent = problem.message;
+      error.hidden = false;
+      button.disabled = false;
+    }
   });
-}
+});
