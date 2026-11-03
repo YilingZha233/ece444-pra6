@@ -4,6 +4,18 @@ A Flask blog with login/logout, adding and deleting entries, and case-insensitiv
 
 Adapted from the [course tutorial](https://github.com/shuruizUofT/flaskr-tdd/blob/main/README.md) at commit `9ba4e4a8143248b9b8c59242b6cdd20abb75d185`, itself adapted from [Michael Herman's Flaskr tutorial](https://github.com/mjhea0/flaskr-tdd). The original MIT license is retained. AI assistance was used for implementation and verification; review the code and explain it in your own words.
 
+## Live application
+
+**[Open the deployed Flaskr app](https://ece444-pra6-6t69.onrender.com/)** · [Health check](https://ece444-pra6-6t69.onrender.com/health)
+
+Deployed on Render with Gunicorn and a separate Render PostgreSQL database (`ece444-pra6-db`). The web service and database use the Free plan in Ohio (US East).
+
+- **Verified on November 2, 2026:** Render reports **Deploy succeeded | Live**, `/health` returns HTTP 200, and the deployed app supports a logged-in session and search results for an existing post.
+- **App login:** username `admin` (unless `ADMIN_USERNAME` was changed), with the password configured as `ADMIN_PASSWORD` in Render. These credentials are separate from the Render account login. Passwords and database connection URLs are not stored in this repository.
+- **Remaining live checks:** verify adding and deleting a disposable post, blocking deletion after logout, and preserving a post across a service restart or redeploy. Automated/local checks for these behaviors are described below.
+
+The Free PostgreSQL instance currently shows an expiration date of **December 2, 2026**. Free web services can take longer to respond after inactivity; open the app before the TA demonstration.
+
 ## Run locally
 
 Requires Python 3.12. From this repository's root:
@@ -26,7 +38,7 @@ python -m flake8 .
 python -m black --check .
 ```
 
-Verified locally: **29 tests passed**, Flake8 passed, and Black passed. GitHub Actions runs these checks on pushes and pull requests. [Verified passing CI run](https://github.com/YilingZha233/ece444-pra6/actions/runs/41564643663). Most tests exercise Flask routes and a real temporary SQLite database; they are integration tests rather than isolated unit tests. PostgreSQL URL selection is tested without opening a remote connection. A successful live PostgreSQL deployment must still be verified separately.
+Verified locally: **29 tests passed**, Flake8 passed, and Black passed. GitHub Actions runs these checks on pushes and pull requests. [Verified passing CI run](https://github.com/YilingZha233/ece444-pra6/actions/runs/41564643663). Most tests exercise Flask routes and a real temporary SQLite database; they are integration tests rather than isolated unit tests. PostgreSQL URL selection is tested without opening a remote connection. Live deployment status and the remaining live verification checks are listed above; the automated suite does not connect to the Render database.
 
 ## What is included
 
@@ -49,9 +61,15 @@ Tests were written against the tutorial baseline before the fixes. The first run
 
 ## Deployment and TA preparation
 
-Follow [the Render guide](docs/DEPLOYMENT.md) to create the database and web service, then use [the TA explanation guide](docs/TA_GUIDE.md) to prepare. Record the actual live URL and verification results in [the submission checklist](docs/SUBMISSION.md).
+The app is deployed at **https://ece444-pra6-6t69.onrender.com/**. The [Render guide](docs/DEPLOYMENT.md) documents how to reproduce the deployment, and the [TA explanation guide](docs/TA_GUIDE.md) explains the application and tests. The [submission checklist](docs/SUBMISSION.md) is a working checklist; its deployment-pending entries predate the successful deployment recorded above.
 
-The submission is your GitHub repository URL. A live deployment, an in-person demonstration, and your own explanation are still needed to finish the PRA.
+To finish the PRA:
+
+1. Complete the remaining live checks listed above.
+2. Submit **https://github.com/YilingZha233/ece444-pra6** to Quercus.
+3. Attend the assigned PRA, demonstrate the live app to the TA, and explain the tests and relevant application components in your own words. Confirm that the TA evaluates the work before the session ends.
+
+The implementation and deployment do not by themselves establish completion of Quercus submission or the TA evaluation.
 
 ## Differences from the tutorial
 
@@ -67,4 +85,4 @@ For compatibility with the assigned tutorial, deletion still uses `GET /delete/<
 
 ## Browser verification
 
-A local Gunicorn browser check verified login, posting, mixed-case body search, deletion from search results, and logout. Screenshots are in `evidence/browser-search.png` and `evidence/browser-delete.png`. This is local verification; a live Render deployment remains pending account setup.
+A local Gunicorn browser check verified login, posting, mixed-case body search, deletion from search results, and logout. Screenshots are in `evidence/browser-search.png` and `evidence/browser-delete.png`. The Render deployment is now live. Its deployment logs show successful health checks, and the live browser displays a logged-in session and search results. The screenshots in `evidence/` document the earlier local run, not the deployed site.
